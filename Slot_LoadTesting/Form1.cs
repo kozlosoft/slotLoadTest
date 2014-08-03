@@ -66,7 +66,7 @@ namespace Slot_LoadTesting
                         ApiVersion,
                         AccessTokenTextBox.Text);
 
-                using (var logger = new Logger(null, logRichTextBox))
+                using (var logger = new Logger(null, logRichTextBox)) 
                 {
                     var request = (HttpWebRequest)WebRequest.Create(url);
                     request.Timeout = 5000;
