@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Threading;
 using System.Web;
 using System.Windows.Forms;
 
@@ -9,8 +8,11 @@ namespace Slot_LoadTesting
 {
     public partial class Form1 : Form
     {
+        //values for sleep not means real world mls - it uses in SmartThread.Sleep
+        private const int HowManyMlsSleepBetweenMessages = 500;
+        private const int HowManyMlsSleepWhenAnyErrorHappened = 15000;
+
         private const string ApiVersion = "5.23";
-        private const int HowManyMlsSleepBetweenMessages = 2000;
         private const string SlotId = "169143693";
         private readonly string _appId = File.ReadAllText("client_id.txt");
         private const string LogFileName = "log.txt";
@@ -53,6 +55,7 @@ namespace Slot_LoadTesting
 
         private void SendMessages()
         {
+            var responseAnalyzer = new ResponseAnalyzer(HowManyMlsSleepWhenAnyErrorHappened);
             while (true)
             {
                 if (_stopSendMessages)
@@ -76,16 +79,17 @@ namespace Slot_LoadTesting
                         {
                             string responseString = ReadFully(response.GetResponseStream());
                             logger.WriteLine(responseString);
+                            responseAnalyzer.Analyze(responseString, logger);
                         }
                     }
                     catch (WebException ex)
                     {
                         logger.WriteLine(ex.Message);
+                        responseAnalyzer.Analyze("error", logger);
                     }
                 }
 
-                Application.DoEvents();
-                Thread.Sleep(HowManyMlsSleepBetweenMessages);
+                SmartThreadSleep.Sleep(HowManyMlsSleepBetweenMessages);
             }
         }
 
