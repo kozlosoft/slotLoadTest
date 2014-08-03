@@ -66,7 +66,7 @@ namespace Slot_LoadTesting
                         ApiVersion,
                         AccessTokenTextBox.Text);
 
-                using (var logger = new Logger(null, logRichTextBox)) 
+                using (var logger = new Logger(null, logRichTextBox))
                 {
                     var request = (HttpWebRequest)WebRequest.Create(url);
                     request.Timeout = 5000;
@@ -92,20 +92,27 @@ namespace Slot_LoadTesting
         private string GenerateMessageForSlot()
         {
             int messageCode = new Random().Next(0, 5);
+            string answer = "";
             switch (messageCode)
             {
                 case 0:
-                    return "аниму";
+                    answer = "аниму";
+                    break;
                 case 1:
-                    return "стихи";
+                    answer = "стихи";
+                    break;
                 case 2:
-                    return "переведи с ru на en лорем испум долор сит амет";
+                    answer = "переведи с ru на en лорем испум долор сит амет";
+                    break;
                 case 3:
-                    return "ролл твой самый нагруженный по ресурам метод стихи?";
+                    answer = "ролл твой самый нагруженный по ресурам метод стихи?";
+                    break;
                 case 4:
-                    return "мегаслот";
+                    answer = "мегаслот";
+                    break;
             }
-            return "random generation error";
+            answer += " " + new Random().Next(int.MinValue, int.MaxValue);
+            return answer;
         }
 
         private string ReadFully(Stream input)
