@@ -8,10 +8,15 @@ namespace Slot_LoadTesting
     {
         private readonly StreamWriter _streamWriter;
         private readonly RichTextBox _richTextBox;
+        private bool _doNotTouchDisk = false;
 
-        public Logger(string logFileName, RichTextBox richTextBox = null)
+        public Logger(string logFileName = null, RichTextBox richTextBox = null)
         {
-            _streamWriter = new StreamWriter(logFileName, true);
+            if (logFileName != null)
+                _streamWriter = new StreamWriter(logFileName, true);
+            else
+                _doNotTouchDisk = true;
+
             if (richTextBox != null)
                 _richTextBox = richTextBox;
             else
@@ -21,14 +26,21 @@ namespace Slot_LoadTesting
 
         public void Dispose()
         {
-            _streamWriter.Close();
-            _streamWriter.Dispose();
+            if (!_doNotTouchDisk)
+            {
+                _streamWriter.Close();
+                _streamWriter.Dispose();
+            }
         }
 
         public void WriteLine(string message)
         {
-            _streamWriter.WriteLine(message);
+            if (!_doNotTouchDisk)
+                _streamWriter.WriteLine(message);
+
             _richTextBox.Text += message + Environment.NewLine;
+            if (_richTextBox.Text.Split('\n').Length > 10)
+                _richTextBox.Text = _richTextBox.Text.Remove(0, _richTextBox.Text.IndexOf('\n') + 1);
         }
     }
 }
